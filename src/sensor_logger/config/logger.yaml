@@ -1,0 +1,13 @@
+/sensor_logger:
+  ros__parameters:
+    log_dir: ~/sensor_logs
+    autostart: false
+    autostart_name: auto
+    record_bag: false           # also run `ros2 bag record` into <session>/bag
+    bag_storage: mcap           # mcap | sqlite3
+    store_ping360_intensities: true
+    store_ping1d_profile: true
+    ping360_topic: /ping360/scan
+    ping1d_topic: /ping1d/data
+    dvl_topic: /dvl/data
+    dvl_position_topic: /dvl/position

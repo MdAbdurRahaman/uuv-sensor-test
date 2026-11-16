@@ -1,0 +1,16 @@
+/sensor_dashboard:
+  ros__parameters:
+    host: 0.0.0.0
+    port: 8765
+    log_dir: ~/sensor_logs      # keep equal to sensor_logger log_dir
+    ping360_topic: /ping360/scan
+    ping1d_topic: /ping1d/data
+    dvl_topic: /dvl/data
+    dvl_position_topic: /dvl/position
+    logger_node: /sensor_logger
+    ping360_node: /ping360
+    ping1d_node: /ping1d
+    dvl_node: /dvl
+    ping360_display_samples: 600
+    ping1d_max_rate_hz: 20.0
+    dvl_max_rate_hz: 20.0

@@ -1,0 +1,20 @@
+/ping1d:
+  ros__parameters:
+    simulate: false
+    connection: serial          # serial | udp (BlueOS ping service: udp_port 9090)
+    port: /dev/ttyUSB1
+    baudrate: 115200
+    host: 192.168.2.2
+    udp_port: 9090
+    frame_id: ping1d_link
+    speed_of_sound: 1500.0
+    auto_mode: true
+    scan_start_m: 0.0
+    scan_length_m: 30.0
+    gain_setting: 0
+    ping_interval_ms: 100
+    publish_profile: true
+    min_confidence: 0
+    field_of_view_deg: 25.0
+    min_range_m: 0.3
+    max_range_m: 100.0

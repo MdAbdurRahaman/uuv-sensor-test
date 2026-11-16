@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sensor Test Bench</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <h1>Sensor Test Bench</h1>
+    <span id="conn" class="pill pill-error" title="Link between this page and the dashboard node"><i></i><b>offline</b></span>
+  </div>
+  <div class="logbar" id="logbar">
+    <input id="logName" placeholder="session name (optional)" maxlength="60">
+    <input id="logNote" placeholder="note, e.g. tank test, gain 1" maxlength="200">
+    <button id="logBtn" class="btn btn-rec" disabled><span class="dot"></span><span class="lbl">Start logging</span></button>
+    <div class="logstat" id="logStat">logger not running</div>
+  </div>
+  <button id="themeBtn" class="btn btn-ghost btn-small" title="Switch light/dark theme">Light</button>
+</header>
+
+<section class="health" id="health">
+  <!-- filled by app.js -->
+</section>
+
+<main class="grid">
+  <!-- ============================ PING360 ============================ -->
+  <section class="panel panel-sonar" id="p360">
+    <div class="panel-head">
+      <div class="title-row"><h2>Ping360 <small>scanning sonar</small></h2><span class="pill conn-pill" id="conn-ping360"><i></i><b>checking…</b></span></div>
+      <div class="readouts">
+        <span><em>angle</em><b id="p360Angle">–</b></span>
+        <span><em>range</em><b id="p360Range">–</b></span>
+        <span><em>rate</em><b id="p360Rate">–</b></span>
+      </div>
+    </div>
+    <div class="sonar-wrap">
+      <div class="sonar-stage" id="sonarStage">
+        <canvas id="sonarImg"></canvas>
+        <canvas id="sonarOverlay"></canvas>
+        <div class="tip" id="sonarTip"></div>
+      </div>
+      <form class="controls" id="p360Form">
+        <label>Range (m)<input name="range_m" data-type="double" type="number" step="0.5" min="0.5" max="100" value="20"></label>
+        <label>Gain<select name="gain_setting" data-type="integer"><option value="0">Low</option><option value="1">Normal</option><option value="2">High</option></select></label>
+        <label>Frequency (kHz)<input name="transmit_frequency" data-type="integer" type="number" min="500" max="1000" value="750"></label>
+        <label>Step (gradians)<input name="step" data-type="integer" type="number" min="1" max="50" value="1"></label>
+        <label>Sector start (°)<input name="start_deg" type="number" min="0" max="360" step="0.9" value="0"></label>
+        <label>Sector stop (°)<input name="stop_deg" type="number" min="0" max="360" step="0.9" value="359.1"></label>
+        <label>Speed of sound (m/s)<input name="speed_of_sound" data-type="double" type="number" min="1300" max="1700" value="1500"></label>
+        <label>Colors<select id="p360Cmap"><option value="blue">Blue</option><option value="copper">Copper</option><option value="gray">Gray</option></select></label>
+        <div class="row">
+          <button class="btn" type="submit">Apply to sonar</button>
+          <button class="btn btn-ghost" type="button" id="p360Clear">Clear image</button>
+        </div>
+      </form>
+    </div>
+    <div class="subchart">
+      <div class="subchart-head">Latest ping (A-scan) <span class="muted">echo strength vs distance</span></div>
+      <div class="ascan-box"><canvas id="ascan"></canvas></div>
+    </div>
+  </section>
+
+  <!-- ============================ PING1D ============================ -->
+  <section class="panel" id="p1d">
+    <div class="panel-head">
+      <div class="title-row"><h2>Ping / Ping2 <small>echosounder</small></h2><span class="pill conn-pill" id="conn-ping1d"><i></i><b>checking…</b></span></div>
+      <div class="readouts">
+        <span class="hero"><em>distance</em><b id="p1dDist">–</b></span>
+        <span><em>confidence</em><b id="p1dConf">–</b></span>
+        <span><em>rate</em><b id="p1dRate">–</b></span>
+      </div>
+    </div>
+    <div class="subchart-head">Distance (m) <span class="muted">last 60 s</span></div>
+    <canvas id="p1dChart" class="chart" style="height:150px"></canvas>
+    <div class="subchart-head">Confidence (%)</div>
+    <canvas id="p1dConfChart" class="chart" style="height:80px"></canvas>
+    <div class="subchart-head">Echogram <span class="muted">profile over time, depth down</span></div>
+    <div class="echo-wrap"><canvas id="echogram"></canvas><div class="tip" id="echoTip"></div></div>
+    <form class="controls inline" id="p1dForm">
+      <label>Speed of sound (m/s)<input name="speed_of_sound" data-type="double" type="number" min="1300" max="1700" value="1500"></label>
+      <label>Ping interval (ms)<input name="ping_interval_ms" data-type="integer" type="number" min="30" max="2000" value="100"></label>
+      <label class="check"><input name="auto_mode" data-type="bool" type="checkbox" checked> Auto range/gain</label>
+      <label>Scan start (m)<input name="scan_start_m" data-type="double" type="number" step="0.1" min="0" value="0"></label>
+      <label>Scan length (m)<input name="scan_length_m" data-type="double" type="number" step="0.5" min="0.5" value="30"></label>
+      <label>Gain (0–6)<input name="gain_setting" data-type="integer" type="number" min="0" max="6" value="0"></label>
+      <div class="row"><button class="btn" type="submit">Apply to echosounder</button></div>
+    </form>
+  </section>
+
+  <!-- ============================== DVL ============================== -->
+  <section class="panel" id="dvl">
+    <div class="panel-head">
+      <div class="title-row"><h2>DVL <small>Nortek Nucleus1000</small></h2><span class="pill conn-pill" id="conn-dvl"><i></i><b>checking…</b></span></div>
+      <div class="readouts">
+        <span><em>bottom lock</em><b id="dvlLock">–</b></span>
+        <span><em>altitude</em><b id="dvlAlt">–</b></span>
+        <span><em>FOM</em><b id="dvlFom">–</b></span>
+        <span><em>rate</em><b id="dvlRate">–</b></span>
+      </div>
+    </div>
+    <div class="envline" id="dvlEnv">temperature – · pressure – · sound speed – · roll/pitch/heading –</div>
+    <div class="subchart-head">Velocity (m/s) <span class="muted">DVL frame, last 60 s</span></div>
+    <canvas id="dvlChart" class="chart" style="height:170px"></canvas>
+    <div class="dvl-bottom">
+      <div>
+        <div class="subchart-head">Beams</div>
+        <table class="beams" id="beams">
+          <thead><tr><th>#</th><th>dist (m)</th><th>vel (m/s)</th><th>FOM (m/s)</th><th>RSSI</th><th>lock</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div>
+        <div class="subchart-head">Dead reckoning (top view)
+          <button class="btn btn-small btn-ghost" id="dvlReset" type="button">Reset</button>
+        </div>
+        <div class="track-wrap"><canvas id="track"></canvas><div class="track-read" id="trackRead"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== LOGS ============================= -->
+  <section class="panel panel-logs" id="logs">
+    <div class="panel-head">
+      <h2>Log sessions <small id="logDir"></small></h2>
+      <button class="btn btn-ghost btn-small" id="logsRefresh" type="button">Refresh</button>
+    </div>
+    <table class="logtable">
+      <thead><tr><th>Session</th><th>Note</th><th>Duration</th><th>Rows</th><th>Files</th><th>Size</th><th></th></tr></thead>
+      <tbody id="logRows"><tr><td colspan="7" class="muted">No sessions yet.</td></tr></tbody>
+    </table>
+  </section>
+</main>
+
+<div class="toast" id="toast"></div>
+<script src="app.js"></script>
+</body>
+</html>

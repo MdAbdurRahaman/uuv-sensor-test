@@ -1,0 +1,9 @@
+build/
+install/
+log/
+__pycache__/
+*.pyc
+*.zip
+windows/diag.txt
+windows/attach_log.txt
+windows/s.sh

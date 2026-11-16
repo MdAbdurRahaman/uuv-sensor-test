@@ -1,0 +1,93 @@
+/ping360:
+  ros__parameters:
+    simulate: false
+    connection: serial          # serial | udp
+    port: /dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_DK0IHDAK-if00-port0
+    baudrate: 2000000
+    host: 192.168.2.2           # udp only (Ping360 Ethernet / BlueOS)
+    udp_port: 12345
+    frame_id: ping360_link
+    range_m: 20.0
+    gain_setting: 0             # 0 low, 1 normal, 2 high
+    transmit_frequency: 750     # kHz
+    number_of_samples: 1200
+    speed_of_sound: 1500.0      # m/s (fresh water ~1480, sea water ~1500-1540)
+    transmit_duration: 0        # us, 0 = automatic
+    start_angle: 0              # gradians (400 = 360 deg)
+    stop_angle: 399
+    step: 1
+    sector_mode: sweep          # sweep | bounce
+
+/ping1d:
+  ros__parameters:
+    simulate: false
+    connection: serial          # serial | udp (BlueOS ping service: udp_port 9090)
+    port: /dev/serial/by-id/usb-FTDI_FT231X_USB_UART_DP05J1EV-if00-port0
+    baudrate: 115200
+    host: 192.168.2.2
+    udp_port: 9090
+    frame_id: ping1d_link
+    speed_of_sound: 1500.0
+    auto_mode: true
+    scan_start_m: 0.0
+    scan_length_m: 30.0
+    gain_setting: 0
+    ping_interval_ms: 100
+    publish_profile: true
+    min_confidence: 0
+    field_of_view_deg: 25.0
+    min_range_m: 0.3
+    max_range_m: 100.0
+
+/dvl:
+  ros__parameters:
+    simulate: false
+    protocol: nortek_nucleus    # nortek_nucleus | waterlinked_tcp | waterlinked_serial | sim
+    # --- Nortek Nucleus1000 ---
+    connection: tcp             # tcp | serial
+    host: 192.168.2.201         # Nucleus IP (DHCP by default) or NORTEK-<serial>.local
+    data_port: 9002             # data-only port, no password
+    command_port: 9000          # command port, used only when send_start is true
+    password: nortek            # factory default command-port password
+    send_start: false           # true = send STOP, init_commands, START when connecting
+    init_commands: ['']         # optional config commands sent before START
+    stop_on_close: false        # true = send STOP when the node shuts down
+    port: /dev/ttyUSB2          # serial connection (115200 baud)
+    baudrate: 115200
+    timeout_s: 3.0
+    # --- Water Linked (only if protocol is waterlinked_*) ---
+    tcp_port: 16171
+    verify_checksum: false
+    frame_id: dvl_link
+    publish_invalid_twist: false
+
+/sensor_logger:
+  ros__parameters:
+    log_dir: ~/sensor_logs
+    autostart: false
+    autostart_name: auto
+    record_bag: false           # also run `ros2 bag record` into <session>/bag
+    bag_storage: mcap           # mcap | sqlite3
+    store_ping360_intensities: true
+    store_ping1d_profile: true
+    ping360_topic: /ping360/scan
+    ping1d_topic: /ping1d/data
+    dvl_topic: /dvl/data
+    dvl_position_topic: /dvl/position
+
+/sensor_dashboard:
+  ros__parameters:
+    host: 0.0.0.0
+    port: 8765
+    log_dir: ~/sensor_logs      # keep equal to sensor_logger log_dir
+    ping360_topic: /ping360/scan
+    ping1d_topic: /ping1d/data
+    dvl_topic: /dvl/data
+    dvl_position_topic: /dvl/position
+    logger_node: /sensor_logger
+    ping360_node: /ping360
+    ping1d_node: /ping1d
+    dvl_node: /dvl
+    ping360_display_samples: 600
+    ping1d_max_rate_hz: 20.0
+    dvl_max_rate_hz: 20.0

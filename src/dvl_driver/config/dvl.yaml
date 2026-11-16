@@ -1,0 +1,21 @@
+/dvl:
+  ros__parameters:
+    simulate: false
+    protocol: nortek_nucleus    # nortek_nucleus | waterlinked_tcp | waterlinked_serial | sim
+    # --- Nortek Nucleus1000 ---
+    connection: tcp             # tcp | serial
+    host: 192.168.2.201         # Nucleus IP (DHCP by default) or NORTEK-<serial>.local
+    data_port: 9002             # data-only port, no password
+    command_port: 9000          # command port, used only when send_start is true
+    password: nortek            # factory default command-port password
+    send_start: false           # true = send STOP, init_commands, START when connecting
+    init_commands: ['']         # optional config commands sent before START
+    stop_on_close: false        # true = send STOP when the node shuts down
+    port: /dev/ttyUSB2          # serial connection (115200 baud)
+    baudrate: 115200
+    timeout_s: 3.0
+    # --- Water Linked (only if protocol is waterlinked_*) ---
+    tcp_port: 16171
+    verify_checksum: false
+    frame_id: dvl_link
+    publish_invalid_twist: false

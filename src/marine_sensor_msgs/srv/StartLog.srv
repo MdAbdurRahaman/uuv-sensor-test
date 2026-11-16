@@ -1,0 +1,7 @@
+# Start a logging session. Empty session_name -> timestamp is used.
+string session_name
+string note                  # free text saved to session_info.json
+---
+bool success
+string message
+string directory

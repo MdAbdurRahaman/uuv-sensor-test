@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>sensor_bringup</name>
+  <version>1.0.0</version>
+  <description>Launch files and parameters that start the sensor test bench (drivers + logger + dashboard).</description>
+  <maintainer email="you@example.com">maintainer</maintainer>
+  <license>MIT</license>
+
+  <exec_depend>ping360_driver</exec_depend>
+  <exec_depend>ping1d_driver</exec_depend>
+  <exec_depend>dvl_driver</exec_depend>
+  <exec_depend>sensor_logger</exec_depend>
+  <exec_depend>sensor_dashboard</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
